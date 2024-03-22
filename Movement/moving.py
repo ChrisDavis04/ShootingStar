@@ -16,7 +16,7 @@ def main():
     pygame.display.set_caption("Wish upon a shooting star and hoping it doesn't crash into the Earth.")
     
     #Entities
-    #yellow background
+    #Navy Blue Background
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((18, 22, 41))
@@ -26,12 +26,12 @@ def main():
     space = space.convert_alpha()
     space = pygame.transform.scale(space, (640, 480))
     
-    #make a red 25 x 25 box
+    #Import the wish star
     star = pygame.image.load("Wish.PNG")
     star = star.convert_alpha()
     star = pygame.transform.scale(star, (100, 100))
     
-    # set up some box variables
+    # set up some star variables
     star_x = 0
     star_y = 200
     #ACTION
@@ -51,7 +51,7 @@ def main():
             if event.type == pygame.QUIT:
                 keepGoing = False
     
-        #modify box value
+        #modify star value
         star_x += 5
         star_y += 3
         #check boundaries
