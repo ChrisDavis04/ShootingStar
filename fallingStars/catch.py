@@ -6,6 +6,50 @@ Created on Wed Mar 27 09:31:23 2024
 """
 import pygame, random, simpleGE
 
+#The boxes
+class Cage(simpleGE.Sprite):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.setImage("border.png")
+        self.setSize(600, 350)
+        self.position = (320, 235)
+
+class ScoreBox(simpleGE.Sprite):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.setImage("textBox.png")
+        self.setSize(475, 70)
+        self.position = (320, 50)
+
+class PlayBox(simpleGE.Sprite):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.setImage("textBox.png")
+        self.setSize(200, 60)
+        self.position = (100, 450)
+
+class QuitBox(simpleGE.Sprite):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.setImage("textBox.png")
+        self.setSize(200, 60)
+        self.position = (540, 450)
+
+#text boxes for the game
+class GameScore(simpleGE.Sprite):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.setImage("textBox.png")
+        self.setSize(200, 60)
+        self.position = (100, 30)
+
+class TimeBox(simpleGE.Sprite):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.setImage("textBox.png")
+        self.setSize(200, 60)
+        self.position = (500, 30)
+
 #The things falling from the sky
 class Wish(simpleGE.Sprite):
     def __init__(self, scene):
@@ -56,7 +100,16 @@ class Entropy(simpleGE.Sprite):
 class Bunny(simpleGE.Sprite):
     def __init__(self, scene):
         super().__init__(scene)
-        self.setImage("seaBunny.png")
+        #self.images = {
+            #"left": self.setImage("seaBunny.png"),
+            #"right": self.setImage("rightBunny.png")}
+        #self.copyImage(self.images["right"])
+        #self.setSize(100, 100)
+        #self.images_x = 320
+        #self.images_y = 430
+        
+        
+        self.setImage("seaBunny.png")   
         self.setSize(100, 100)
         self.position = (320, 430)
         self.moveSpeed = 7
@@ -64,18 +117,24 @@ class Bunny(simpleGE.Sprite):
     def process(self):
         if self.isKeyPressed(pygame.K_LEFT):
             self.x -= self.moveSpeed
+            #self.copyImage(self.images["left"])
         if self.isKeyPressed(pygame.K_RIGHT):
             self.x += self.moveSpeed
+            #self.copyImage(self.images["right"])
 
 class LblScore(simpleGE.Label):
     def __init__(self):
         super().__init__()
+        self.clearBack = True
+        self.fgColor = "white"
         self.text = "Score: 0"
         self.center = (100, 30)
 
 class LblTime(simpleGE.Label):
     def __init__(self):
         super().__init__()
+        self.clearBack = True
+        self.fgColor = "white"
         self.text = "Time Left: 10"
         self.center = (500, 30)
 
@@ -92,6 +151,9 @@ class Game(simpleGE.Scene):
         numEntropy = 3
         numWish = 12
         numTimeUp = 2
+        
+        self.gameScore = GameScore(self)
+        self.timeBox = TimeBox(self)
         
         
         self.bunny = Bunny(self)
@@ -111,7 +173,7 @@ class Game(simpleGE.Scene):
         self.lblTime = LblTime()
         
         
-        self.sprites = [self.bunny, self.wishes, self.comets, self.voids, self.lblScore, self.lblTime]
+        self.sprites = [self.bunny, self.wishes, self.comets, self.voids, self.gameScore, self.timeBox, self.lblScore, self.lblTime]
     
     def process(self):
         for wish in self.wishes:
@@ -131,7 +193,7 @@ class Game(simpleGE.Scene):
             if self.bunny.collidesWith(void):
                 void.reset()
                 self.score -= 1
-                self.timer.totalTime -= 1
+                self.timer.totalTime -= 2
                 self.lblScore.text = f"Score: {self.score}"
                 
         self.lblTime.text = f"Time Left: {self.timer.getTimeLeft():.2f}"
@@ -149,32 +211,44 @@ class Instructions(simpleGE.Scene):
         self.status = "quit"
         self.score = score
         
+        self.cage = Cage(self)
+        self.playBG = PlayBox(self)
+        self.quitBG = QuitBox(self)
+        self.scoreBox = ScoreBox(self)
         
         self.Instructions = simpleGE.MultiLabel()
+        self.Instructions.clearBack = True
+        self.Instructions.fgColor = "black"
         self.Instructions.textLines = [
-            "On this night of ethereal beauty",
-            "With the celestial bodies as your guide",
-            "Collect the Falling Stars to bring about",
-            "Endless Miracles."
+            "Collect the falling stars",
+            "Attain the comets for more time",
+            "Dodge the voids or you lose your limited time",
+            "Now, bring about endless miracles."
             ]
         
         self.Instructions.center = (320, 240)
-        self.Instructions.size = (400, 200)
+        self.Instructions.size = (450, 200)
         
         self.lblScore = simpleGE.Label()
+        self.lblScore.clearBack = True
+        self.lblScore.fgColor = "white"
         self.lblScore.center = (320, 50)
         self.lblScore.size = (400, 30)
         self.lblScore.text = f"Previous Stars Collected: {self.score}"
         
         self.btnPlay = simpleGE.Button()
+        self.btnPlay.clearBack = True
+        self.btnPlay.fgColor = "white"
         self.btnPlay.center = (100, 450)
         self.btnPlay.text = "Play (up)"
         
         self.btnQuit = simpleGE.Button()
+        self.btnQuit.clearBack = True
+        self.btnQuit.fgColor = "white"
         self.btnQuit.center = (540, 450)
         self.btnQuit.text = "Quit (down)"
         
-        self.sprites = [self.lblScore, self.Instructions, self.btnPlay, self.btnQuit]
+        self.sprites = [self.scoreBox, self.cage, self.playBG, self.quitBG, self.lblScore, self.Instructions, self.btnPlay, self.btnQuit]
         
         
     def process(self):
